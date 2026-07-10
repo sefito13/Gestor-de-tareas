@@ -1,3 +1,7 @@
 venv/
 __pycache__/
-task_manager.db
+*.pyc
+*.db
+.env
+.vscode/
+.idea/
