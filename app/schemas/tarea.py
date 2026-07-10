@@ -18,3 +18,12 @@ class TareaCreate(TareaBase):
 
 class TareaUpdate(TareaBase):
     estado: EstadoTarea
+
+class TareaResponse(TareaBase):
+    id: int
+    titulo: str
+    estado: EstadoTarea
+
+    model_config = {
+        "from_attributes": True
+    }

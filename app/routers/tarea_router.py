@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
-from app.schemas.tarea import TareaCreate, TareaUpdate
+from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse
 from app.services import tarea_services
 
 def get_db():
@@ -16,20 +16,20 @@ router = APIRouter(
     tags=["tareas"]
 )
 
-@router.post("/")
+@router.post("/", response_model=TareaResponse)
 def crear_tarea(
     tarea: TareaCreate,
     db: Session = Depends(get_db)
 ):
     return tarea_services.crear_tarea(db, tarea)
 
-@router.get("/")
+@router.get("/", response_model=list[TareaResponse])
 def obtener_tareas(
     db: Session = Depends(get_db)
 ):
     return tarea_services.obtener_tareas(db)
 
-@router.get("/{tarea_id}")
+@router.get("/{tarea_id}", response_model=TareaResponse)
 def obtener_tarea(
     tarea_id: int,
     db: Session = Depends(get_db)
@@ -43,7 +43,7 @@ def obtener_tarea(
     return tarea
 
 
-@router.put("/{tarea_id}")
+@router.put("/{tarea_id}", response_model=TareaResponse)
 def actualizar_tarea(
     tarea_id: int,
     tarea: TareaUpdate,
