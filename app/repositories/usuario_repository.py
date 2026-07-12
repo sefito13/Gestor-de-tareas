@@ -2,11 +2,15 @@ from sqlalchemy.orm import Session
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
 
-def crear_usuario(db: Session, usuario: UsuarioCreate) -> Usuario:
+def crear_usuario(
+    db: Session, 
+    usuario: UsuarioCreate,
+    password_hasheado
+):
     nuevo_usuario = Usuario(
         nombre=usuario.nombre,
         correo=usuario.correo,
-        password=usuario.password
+        password=password_hasheado
     )
 
     db.add(nuevo_usuario)
