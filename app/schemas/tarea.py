@@ -21,7 +21,6 @@ class TareaUpdate(TareaBase):
 
 class TareaResponse(TareaBase):
     id: int
-    titulo: str
     estado: EstadoTarea
 
     model_config = {
