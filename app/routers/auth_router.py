@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.usuario import UsuarioLogin
 from app.services import auth_services
+from app.core.security import crear_acces_token
 
 
 def get_db():
@@ -31,7 +32,12 @@ def login(
             detail="Correo o contraseña incorrectos"
         )
         
+    acces_token = crear_acces_token(
+        data={"sub": str(usuario.id)}
+    )
+    
     return {
-        "message": "Login exitoso"
+        "access_token": acces_token,
+        "token_type": "bearer"
     }
 
