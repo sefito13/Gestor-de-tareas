@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.tarea import Tarea
-from app.schemas.tarea import TareaCreate, TareaUpdate
+from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea
 from app.models.usuario import Usuario
 
 def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
@@ -13,8 +13,17 @@ def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     db.refresh(nueva_tarea)
     return nueva_tarea
 
-def obtener_tareas(db: Session, usuario_actual: Usuario):
-    return db.query(Tarea).filter(Tarea.usuario_id == usuario_actual.id).all()
+def obtener_tareas(db: Session, usuario_actual: Usuario, page: int, size: int, estado: EstadoTarea | None):
+    query = db.query(Tarea).filter(Tarea.usuario_id == usuario_actual.id)
+    
+    if estado:
+        query = query.filter(Tarea.estado == estado.value)
+    
+    total = query.count()
+
+    tareas = (query.offset((page - 1) * size).limit(size).all())
+    
+    return tareas, total
 
 def obtener_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
     return db.query(Tarea).filter(Tarea.id == tarea_id, Tarea.usuario_id == usuario_actual.id).first()

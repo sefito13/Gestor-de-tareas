@@ -42,3 +42,10 @@ class TareaResponse(TareaBase):
     model_config = {
         "from_attributes": True
     }
+
+class TareaPaginada(BaseModel):
+    items: list[TareaResponse]
+    total: int
+    page: int
+    size: int
+    total_pages: int

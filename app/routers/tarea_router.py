@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
-from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse
+from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse, EstadoTarea, TareaPaginada
 from app.services import tarea_services
 from app.dependencies.auth import obtener_usuario_actual
 from app.models.usuario import Usuario
@@ -26,12 +26,27 @@ def crear_tarea(
 ):
     return tarea_services.crear_tarea(db, tarea, usuario_actual)
 
-@router.get("/", response_model=list[TareaResponse], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=TareaPaginada, status_code=status.HTTP_200_OK)
 def obtener_tareas(
+    page: int = Query(
+        default=1,
+        ge=1,
+        description="Numero de pagina"
+    ),
+    size: int = Query(
+        default=10,
+        ge=1,
+        le=100,
+        description="Cantidad de registros por pagina"
+    ),
+    estado: EstadoTarea | None = Query(
+        default=None,
+        description="Filtrar por estado"
+    ),
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_services.obtener_tareas(db, usuario_actual)
+    return tarea_services.obtener_tareas(db, usuario_actual, page, size, estado)
 
 @router.get("/{tarea_id}", response_model=TareaResponse, status_code=status.HTTP_200_OK)
 def obtener_tarea(
