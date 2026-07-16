@@ -18,7 +18,7 @@ def crear_usuario(
     db.refresh(nuevo_usuario)
     return nuevo_usuario
 
-def obtener_usuario_por_correo(db: Session, correo: str) -> Usuario:
+def obtener_usuario_por_correo(db: Session, correo: str):
     return db.query(Usuario).filter(Usuario.correo == correo).first()
 
 def obtener_usuario_por_id(db: Session, usuario_id: int):

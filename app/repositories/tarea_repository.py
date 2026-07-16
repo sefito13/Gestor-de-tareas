@@ -16,11 +16,11 @@ def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
 def obtener_tareas(db: Session, usuario_actual: Usuario):
     return db.query(Tarea).filter(Tarea.usuario_id == usuario_actual.id).all()
 
-def obtener_tarea(db: Session, tarea_id: int):
-    return db.query(Tarea).filter(Tarea.id == tarea_id).first()
+def obtener_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
+    return db.query(Tarea).filter(Tarea.id == tarea_id, Tarea.usuario_id == usuario_actual.id).first()
 
-def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate):
-    tarea_existente = obtener_tarea(db, tarea_id)
+def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate, usuario_actual: Usuario):
+    tarea_existente = obtener_tarea(db, tarea_id, usuario_actual)
     if not tarea_existente:
         return None
     
@@ -30,8 +30,8 @@ def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate):
     db.refresh(tarea_existente)
     return tarea_existente
 
-def eliminar_tarea(db: Session, tarea_id: int):
-    tarea_existente = obtener_tarea(db, tarea_id)
+def eliminar_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
+    tarea_existente = obtener_tarea(db, tarea_id, usuario_actual)
     if not tarea_existente:
         return None
     

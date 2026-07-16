@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.usuario import UsuarioCreate, UsuarioUpdate, UsuarioResponse
@@ -18,20 +18,14 @@ router = APIRouter(
     tags=["usuarios"]
 )
 
-@router.post("/", response_model=UsuarioResponse)
+@router.post("/", response_model=UsuarioResponse, status_code=status.HTTP_201_CREATED)
 def crear_usuario(
     usuario: UsuarioCreate,
     db: Session = Depends(get_db)
 ):
-    usuario_existente = usuario_services.obterner_usuario_por_correo(db, usuario.correo)
-    if usuario_existente:
-        raise HTTPException(
-            status_code=400,
-            detail="El correo ya esta registrado"
-        )
     return usuario_services.crear_usuario(db, usuario)
 
-@router.get("/me", response_model=UsuarioResponse)
+@router.get("/me", response_model=UsuarioResponse, status_code=status.HTTP_200_OK)
 def obtener_mi_perfil(
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):

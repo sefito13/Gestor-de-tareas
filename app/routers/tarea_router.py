@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse
@@ -18,7 +18,7 @@ router = APIRouter(
     tags=["tareas"]
 )
 
-@router.post("/", response_model=TareaResponse)
+@router.post("/", response_model=TareaResponse, status_code=status.HTTP_201_CREATED)
 def crear_tarea(
     tarea: TareaCreate,
     db: Session = Depends(get_db),
@@ -26,19 +26,20 @@ def crear_tarea(
 ):
     return tarea_services.crear_tarea(db, tarea, usuario_actual)
 
-@router.get("/", response_model=list[TareaResponse])
+@router.get("/", response_model=list[TareaResponse], status_code=status.HTTP_200_OK)
 def obtener_tareas(
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
     return tarea_services.obtener_tareas(db, usuario_actual)
 
-@router.get("/{tarea_id}", response_model=TareaResponse)
+@router.get("/{tarea_id}", response_model=TareaResponse, status_code=status.HTTP_200_OK)
 def obtener_tarea(
     tarea_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea = tarea_services.obtener_tarea(db, tarea_id)
+    tarea = tarea_services.obtener_tarea(db, tarea_id, usuario_actual)
     if not tarea:
         raise HTTPException(
             status_code=404,
@@ -47,27 +48,30 @@ def obtener_tarea(
     return tarea
 
 
-@router.put("/{tarea_id}", response_model=TareaResponse)
+@router.put("/{tarea_id}", response_model=TareaResponse, status_code=status.HTTP_200_OK)
 def actualizar_tarea(
     tarea_id: int,
     tarea: TareaUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea_existente = tarea_services.obtener_tarea(db, tarea_id)
-    if not tarea_existente:
+    tarea_actualizada = tarea_services.actualizar_tarea(db, tarea_id, tarea, usuario_actual)
+    
+    if not tarea_actualizada:
         raise HTTPException(
             status_code=404,
             detail="Tarea no encontrada"
         )
     
-    return tarea_services.actualizar_tarea(db, tarea_id, tarea)
+    return tarea_actualizada
 
-@router.delete("/{tarea_id}")
+@router.delete("/{tarea_id}", status_code=status.HTTP_200_OK)
 def eliminar_tarea(
     tarea_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea_existente = tarea_services.eliminar_tarea(db, tarea_id)
+    tarea_existente = tarea_services.eliminar_tarea(db, tarea_id, usuario_actual)
     if not tarea_existente:
         raise HTTPException(
             status_code=404,

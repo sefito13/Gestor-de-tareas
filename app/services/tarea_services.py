@@ -9,11 +9,11 @@ def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
 def obtener_tareas(db: Session, usuario_actual: Usuario):
     return tarea_repository.obtener_tareas(db, usuario_actual)
 
-def obtener_tarea(db: Session, tarea_id: int):
-    return tarea_repository.obtener_tarea(db, tarea_id)
+def obtener_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
+    return tarea_repository.obtener_tarea(db, tarea_id, usuario_actual)
 
-def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate):
-    return tarea_repository.actualizar_tarea(db, tarea_id, tarea)
+def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate, usuario_actual: Usuario):
+    return tarea_repository.actualizar_tarea(db, tarea_id, tarea, usuario_actual)
 
-def eliminar_tarea(db: Session, tarea_id: int):
-    return tarea_repository.eliminar_tarea(db, tarea_id)
+def eliminar_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
+    return tarea_repository.eliminar_tarea(db, tarea_id, usuario_actual)
