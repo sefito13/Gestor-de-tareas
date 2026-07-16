@@ -17,7 +17,7 @@ def verificar_password(
         password_hasheado
     )
 
-def crear_acces_token(data: dict) -> str:
+def crear_access_token(data: dict) -> str:
     datos_token = data.copy()
     
     expiracion = datetime.now(timezone.utc) + timedelta(

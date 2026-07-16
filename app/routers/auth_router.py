@@ -1,9 +1,9 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm
 from app.database import SessionLocal
-from app.schemas.usuario import UsuarioLogin
 from app.services import auth_services
-from app.core.security import crear_acces_token
+from app.core.security import crear_access_token
 
 
 def get_db():
@@ -17,13 +17,13 @@ router = APIRouter(prefix="/auth", tags=["Autentificación"])
 
 @router.post("/login")
 def login(
-    datos: UsuarioLogin,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
     usuario = auth_services.autenticar_usuario(
         db,
-        datos.correo,
-        datos.password
+        form_data.username,
+        form_data.password
     )
     
     if not usuario:
@@ -32,12 +32,11 @@ def login(
             detail="Correo o contraseña incorrectos"
         )
         
-    acces_token = crear_acces_token(
+    access_token = crear_access_token(
         data={"sub": str(usuario.id)}
     )
     
     return {
-        "access_token": acces_token,
+        "access_token": access_token,
         "token_type": "bearer"
     }
-

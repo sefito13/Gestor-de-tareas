@@ -20,3 +20,6 @@ def crear_usuario(
 
 def obtener_usuario_por_correo(db: Session, correo: str) -> Usuario:
     return db.query(Usuario).filter(Usuario.correo == correo).first()
+
+def obtener_usuario_por_id(db: Session, usuario_id: int):
+    return db.query(Usuario).filter(Usuario.id == usuario_id).first()
