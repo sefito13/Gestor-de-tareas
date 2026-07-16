@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse
 from app.services import tarea_services
+from app.dependencies.auth import obtener_usuario_actual
+from app.models.usuario import Usuario
 
 def get_db():
     db = SessionLocal()
@@ -19,15 +21,17 @@ router = APIRouter(
 @router.post("/", response_model=TareaResponse)
 def crear_tarea(
     tarea: TareaCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_services.crear_tarea(db, tarea)
+    return tarea_services.crear_tarea(db, tarea, usuario_actual)
 
 @router.get("/", response_model=list[TareaResponse])
 def obtener_tareas(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_services.obtener_tareas(db)
+    return tarea_services.obtener_tareas(db, usuario_actual)
 
 @router.get("/{tarea_id}", response_model=TareaResponse)
 def obtener_tarea(

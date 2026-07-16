@@ -1,18 +1,20 @@
 from sqlalchemy.orm import Session
 from app.models.tarea import Tarea
 from app.schemas.tarea import TareaCreate, TareaUpdate
+from app.models.usuario import Usuario
 
-def crear_tarea(db: Session, tarea: TareaCreate):
+def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     nueva_tarea = Tarea(
-        titulo=tarea.titulo
+        titulo=tarea.titulo,
+        usuario_id=usuario_actual.id
     )
     db.add(nueva_tarea)
     db.commit()
     db.refresh(nueva_tarea)
     return nueva_tarea
 
-def obtener_tareas(db: Session):
-    return db.query(Tarea).all()
+def obtener_tareas(db: Session, usuario_actual: Usuario):
+    return db.query(Tarea).filter(Tarea.usuario_id == usuario_actual.id).all()
 
 def obtener_tarea(db: Session, tarea_id: int):
     return db.query(Tarea).filter(Tarea.id == tarea_id).first()
