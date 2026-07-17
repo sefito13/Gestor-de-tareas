@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
+from datetime import datetime
 
 class EstadoTarea(str, Enum):
     pendiente = "Pendiente"
@@ -38,6 +39,8 @@ class TareaUpdate(TareaBase):
 class TareaResponse(TareaBase):
     id: int
     estado: EstadoTarea
+    created_at: datetime
+    updated_at: datetime
 
     model_config = {
         "from_attributes": True
@@ -49,3 +52,7 @@ class TareaPaginada(BaseModel):
     page: int
     size: int
     total_pages: int
+    
+class OrdenTarea(str, Enum):
+    asc = "asc"
+    desc = "desc"

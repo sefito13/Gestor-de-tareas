@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.tarea import Tarea
-from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea
+from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea, OrdenTarea
 from app.models.usuario import Usuario
 
 def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
@@ -13,17 +13,24 @@ def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     db.refresh(nueva_tarea)
     return nueva_tarea
 
-def obtener_tareas(db: Session, usuario_actual: Usuario, page: int, size: int, estado: EstadoTarea | None):
+def obtener_tareas(db: Session, usuario_actual: Usuario, page: int, size: int, estado: EstadoTarea | None, buscar: str | None, orden: OrdenTarea):
     query = db.query(Tarea).filter(Tarea.usuario_id == usuario_actual.id)
     
     if estado:
         query = query.filter(Tarea.estado == estado.value)
     
+    if buscar: query= query.filter(Tarea.titulo.ilike(f"%{buscar}%"))
+    
+    if orden == OrdenTarea.asc:
+        query = query.order_by(Tarea.created_at.asc())
+    else:
+        query = query.order_by(Tarea.created_at.desc())
+    
     total = query.count()
 
     tareas = (query.offset((page - 1) * size).limit(size).all())
     
-    return tareas, total
+    return {"tareas": tareas, "total": total, "page": page, "size": size, "total_pages": (total + size - 1) // size}
 
 def obtener_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
     return db.query(Tarea).filter(Tarea.id == tarea_id, Tarea.usuario_id == usuario_actual.id).first()

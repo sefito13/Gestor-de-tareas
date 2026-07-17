@@ -1,17 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from app.database import SessionLocal
-from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse, EstadoTarea, TareaPaginada
-from app.services import tarea_services
+from app.dependencies.database import get_db
+from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse, EstadoTarea, TareaPaginada, OrdenTarea
+from app.services import tarea_service
 from app.dependencies.auth import obtener_usuario_actual
 from app.models.usuario import Usuario
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from app.core.exceptions import tarea_no_encontrada
 
 router = APIRouter(
     prefix="/tareas",
@@ -24,7 +18,7 @@ def crear_tarea(
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_services.crear_tarea(db, tarea, usuario_actual)
+    return tarea_service.crear_tarea(db, tarea, usuario_actual)
 
 @router.get("/", response_model=TareaPaginada, status_code=status.HTTP_200_OK)
 def obtener_tareas(
@@ -43,10 +37,18 @@ def obtener_tareas(
         default=None,
         description="Filtrar por estado"
     ),
+    buscar: str | None = Query(
+        default=None,
+        description="Buscar por titulo"
+    ),
+    orden: OrdenTarea = Query(
+        default=OrdenTarea.asc,
+        description="Orden de creacion"
+    ),
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_services.obtener_tareas(db, usuario_actual, page, size, estado)
+    return tarea_service.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden)
 
 @router.get("/{tarea_id}", response_model=TareaResponse, status_code=status.HTTP_200_OK)
 def obtener_tarea(
@@ -54,12 +56,11 @@ def obtener_tarea(
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea = tarea_services.obtener_tarea(db, tarea_id, usuario_actual)
+    tarea = tarea_service.obtener_tarea(db, tarea_id, usuario_actual)
+    
     if not tarea:
-        raise HTTPException(
-            status_code=404,
-            detail="Tarea no encontrada"
-        )
+        tarea_no_encontrada()
+        
     return tarea
 
 
@@ -70,13 +71,10 @@ def actualizar_tarea(
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea_actualizada = tarea_services.actualizar_tarea(db, tarea_id, tarea, usuario_actual)
+    tarea_actualizada = tarea_service.actualizar_tarea(db, tarea_id, tarea, usuario_actual)
     
     if not tarea_actualizada:
-        raise HTTPException(
-            status_code=404,
-            detail="Tarea no encontrada"
-        )
+        tarea_no_encontrada
     
     return tarea_actualizada
 
@@ -86,11 +84,9 @@ def eliminar_tarea(
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    tarea_existente = tarea_services.eliminar_tarea(db, tarea_id, usuario_actual)
+    tarea_existente = tarea_service.eliminar_tarea(db, tarea_id, usuario_actual)
+    
     if not tarea_existente:
-        raise HTTPException(
-            status_code=404,
-            detail="Tarea no encontrada"
-        )
+        tarea_no_encontrada()
     
     return {"message": "Tarea eliminada con exito"}

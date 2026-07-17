@@ -1,14 +1,14 @@
 import math
 from sqlalchemy.orm import Session
-from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea, TareaPaginada
+from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea, TareaPaginada, OrdenTarea
 from app.repositories import tarea_repository
 from app.models.usuario import Usuario
 
 def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     return tarea_repository.crear_tarea(db, tarea, usuario_actual)
 
-def obtener_tareas(db: Session, usuario_actual: Usuario, page:int, size: int, estado: EstadoTarea | None):
-    tareas, total = tarea_repository.obtener_tareas(db, usuario_actual, page, size, estado)
+def obtener_tareas(db: Session, usuario_actual: Usuario, page:int, size: int, estado: EstadoTarea | None, buscar: str | None, orden: OrdenTarea):
+    tareas, total = tarea_repository.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden)
     
     total_pages = math.ceil(total / size) if total > 0 else 1
     

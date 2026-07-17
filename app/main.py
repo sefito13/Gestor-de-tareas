@@ -1,10 +1,7 @@
 from fastapi import FastAPI
-from app.database import engine, Base
-from app.routers.tarea_router import router as tarea_router
-from app.routers.usuario_router import router as usuario_router
-from app.routers.auth_router import router as auth_router
-
-Base.metadata.create_all(bind=engine)
+from app.routers.tarea import router as tarea_router
+from app.routers.usuario import router as usuario_router
+from app.routers.auth import router as auth_router
 
 app = FastAPI()
 
