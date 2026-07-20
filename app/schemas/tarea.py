@@ -56,3 +56,9 @@ class TareaPaginada(BaseModel):
 class OrdenTarea(str, Enum):
     asc = "asc"
     desc = "desc"
+    
+class ResumenTareas(BaseModel):
+    total: int
+    pendiente: int
+    en_curso: int
+    completadas: int

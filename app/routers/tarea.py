@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 from app.dependencies.database import get_db
-from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse, EstadoTarea, TareaPaginada, OrdenTarea
+from app.schemas.tarea import TareaCreate, TareaUpdate, TareaResponse, EstadoTarea, TareaPaginada, OrdenTarea, ResumenTareas
 from app.services import tarea_service
 from app.dependencies.auth import obtener_usuario_actual
 from app.models.usuario import Usuario
 from app.core.exceptions import tarea_no_encontrada
+from datetime import datetime
 
 router = APIRouter(
     prefix="/tareas",
@@ -45,10 +46,18 @@ def obtener_tareas(
         default=OrdenTarea.asc,
         description="Orden de creacion"
     ),
+    desde: datetime | None = Query(
+        default=None,
+        description="Fecha inicial"
+    ),
+    hasta: datetime | None = Query(
+        default=None,
+        description="Fecha final"
+    ),
     db: Session = Depends(get_db),
     usuario_actual: Usuario = Depends(obtener_usuario_actual)
 ):
-    return tarea_service.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden)
+    return tarea_service.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden, desde, hasta)
 
 @router.get("/{tarea_id}", response_model=TareaResponse, status_code=status.HTTP_200_OK)
 def obtener_tarea(
@@ -74,7 +83,7 @@ def actualizar_tarea(
     tarea_actualizada = tarea_service.actualizar_tarea(db, tarea_id, tarea, usuario_actual)
     
     if not tarea_actualizada:
-        tarea_no_encontrada
+        tarea_no_encontrada()
     
     return tarea_actualizada
 
@@ -90,3 +99,10 @@ def eliminar_tarea(
         tarea_no_encontrada()
     
     return {"message": "Tarea eliminada con exito"}
+
+@router.get("/resumen", response_model=ResumenTareas)
+def obtener_resumen(
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(obtener_usuario_actual)
+):
+    return tarea_service.obtener_resumen(db, usuario_actual)

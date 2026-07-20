@@ -3,12 +3,13 @@ from sqlalchemy.orm import Session
 from app.schemas.tarea import TareaCreate, TareaUpdate, EstadoTarea, TareaPaginada, OrdenTarea
 from app.repositories import tarea_repository
 from app.models.usuario import Usuario
+from datetime import datetime
 
 def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     return tarea_repository.crear_tarea(db, tarea, usuario_actual)
 
-def obtener_tareas(db: Session, usuario_actual: Usuario, page:int, size: int, estado: EstadoTarea | None, buscar: str | None, orden: OrdenTarea):
-    tareas, total = tarea_repository.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden)
+def obtener_tareas(db: Session, usuario_actual: Usuario, page:int, size: int, estado: EstadoTarea | None, buscar: str | None, orden: OrdenTarea, desde: datetime | None, hasta: datetime | None):
+    tareas, total = tarea_repository.obtener_tareas(db, usuario_actual, page, size, estado, buscar, orden, desde, hasta)
     
     total_pages = math.ceil(total / size) if total > 0 else 1
     
@@ -22,3 +23,6 @@ def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate, usuario_act
 
 def eliminar_tarea(db: Session, tarea_id: int, usuario_actual: Usuario):
     return tarea_repository.eliminar_tarea(db, tarea_id, usuario_actual)
+
+def obtener_resumen(db: Session, usuario_actual: Usuario):
+    return tarea_repository.obtener_resumen(db, usuario_actual)
