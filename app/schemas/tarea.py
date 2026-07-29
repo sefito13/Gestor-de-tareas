@@ -7,7 +7,7 @@ class EstadoTarea(str, Enum):
     en_curso = "En Curso"
     completada = "Completada"
     
-class  PrioridadTarea(str, Enum):
+class PrioridadTarea(str, Enum):
     alta = "Alta"
     media = "Media"
     baja = "Baja"
@@ -18,32 +18,22 @@ class TareaBase(BaseModel):
         min_length=3, 
         max_length=100
     )
-
-class TareaCreate(TareaBase):
-    prioridad: PrioridadTarea = PrioridadTarea.media
-    fecha_vencimiento: datetime | None = None
     @field_validator("titulo")
     @classmethod
     def validar_titulo(cls, value: str):
         value = value.strip()
-        
+            
         if not value:
             raise ValueError("El titulo no puede estar vacio")
-        return value
-    
+        return value    
 
+class TareaCreate(TareaBase):
+    prioridad: PrioridadTarea = PrioridadTarea.media
+    fecha_vencimiento: datetime | None = None    
 class TareaUpdate(TareaBase):
     estado: EstadoTarea
     prioridad: PrioridadTarea
     fecha_vencimiento: datetime | None = None
-    @field_validator("titulo")
-    @classmethod
-    def validar_titulo(cls, value: str):
-        value = value.strip()
-        
-        if not value:
-            raise ValueError("El titulo no puede estar vacio")
-        return value
 class TareaResponse(TareaBase):
     id: int
     estado: EstadoTarea
@@ -69,6 +59,6 @@ class OrdenTarea(str, Enum):
     
 class ResumenTareas(BaseModel):
     total: int
-    pendiente: int
+    pendientes: int
     en_curso: int
     completadas: int

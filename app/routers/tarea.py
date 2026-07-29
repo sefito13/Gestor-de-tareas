@@ -10,7 +10,7 @@ from datetime import datetime
 
 router = APIRouter(
     prefix="/tareas",
-    tags=["tareas"]
+    tags=["Tareas"]
 )
 
 @router.post("/", response_model=TareaResponse, status_code=status.HTTP_201_CREATED)

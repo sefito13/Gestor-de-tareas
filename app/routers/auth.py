@@ -1,16 +1,17 @@
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import Depends, APIRouter, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies.database import get_db
 from app.services import auth_service
 from app.core.security import crear_access_token
+from app.core.exceptions import credenciales_invalidas
 
 router = APIRouter(
     prefix="/auth", 
     tags=["Autentificación"]
 )
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
@@ -22,10 +23,7 @@ def login(
     )
     
     if not usuario:
-        raise HTTPException(
-            status_code=401,
-            detail="Correo o contraseña incorrectos"
-        )
+        credenciales_invalidas
         
     access_token = crear_access_token(
         data={"sub": str(usuario.id)}

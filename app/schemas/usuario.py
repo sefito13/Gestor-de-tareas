@@ -18,8 +18,10 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioUpdate(UsuarioBase):
     pass
     
-class UsuarioResponse(UsuarioBase):
+class UsuarioResponse(BaseModel):
     id: int
+    nombre: str
+    correo: EmailStr
 
     model_config = {
         "from_attributes": True
