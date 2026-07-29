@@ -7,9 +7,11 @@ from datetime import datetime
 def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     nueva_tarea = Tarea(
         titulo=tarea.titulo,
-        usuario_id=usuario_actual.id
+        usuario_id=usuario_actual.id,
+        prioridad=tarea.prioridad.value
     )
     db.add(nueva_tarea)
+    
     db.commit()
     db.refresh(nueva_tarea)
     return nueva_tarea
@@ -50,6 +52,7 @@ def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate, usuario_act
     
     tarea_existente.titulo = tarea.titulo
     tarea_existente.estado = tarea.estado.value
+    tarea_existente.prioridad = tarea.prioridad.value
     db.commit()
     db.refresh(tarea_existente)
     return tarea_existente

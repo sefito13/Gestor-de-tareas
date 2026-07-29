@@ -6,6 +6,11 @@ class EstadoTarea(str, Enum):
     pendiente = "Pendiente"
     en_curso = "En Curso"
     completada = "Completada"
+    
+class  PrioridadTarea(str, Enum):
+    alta = "Alta"
+    media = "Media"
+    baja = "Baja"
 
 class TareaBase(BaseModel):
     titulo: str = Field(
@@ -15,6 +20,7 @@ class TareaBase(BaseModel):
     )
 
 class TareaCreate(TareaBase):
+    prioridad: PrioridadTarea = PrioridadTarea.media
     @field_validator("titulo")
     @classmethod
     def validar_titulo(cls, value: str):
@@ -27,7 +33,7 @@ class TareaCreate(TareaBase):
 
 class TareaUpdate(TareaBase):
     estado: EstadoTarea
-
+    prioridad: PrioridadTarea
     @field_validator("titulo")
     @classmethod
     def validar_titulo(cls, value: str):
@@ -39,6 +45,7 @@ class TareaUpdate(TareaBase):
 class TareaResponse(TareaBase):
     id: int
     estado: EstadoTarea
+    prioridad: PrioridadTarea
     created_at: datetime
     updated_at: datetime
 
