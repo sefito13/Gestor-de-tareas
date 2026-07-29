@@ -8,7 +8,8 @@ def crear_tarea(db: Session, tarea: TareaCreate, usuario_actual: Usuario):
     nueva_tarea = Tarea(
         titulo=tarea.titulo,
         usuario_id=usuario_actual.id,
-        prioridad=tarea.prioridad.value
+        prioridad=tarea.prioridad.value,
+        fecha_vencimiento=tarea.fecha_vencimiento
     )
     db.add(nueva_tarea)
     
@@ -53,6 +54,7 @@ def actualizar_tarea(db: Session, tarea_id: int, tarea: TareaUpdate, usuario_act
     tarea_existente.titulo = tarea.titulo
     tarea_existente.estado = tarea.estado.value
     tarea_existente.prioridad = tarea.prioridad.value
+    tarea_existente.fecha_vencimiento = tarea.fecha_vencimiento
     db.commit()
     db.refresh(tarea_existente)
     return tarea_existente

@@ -21,6 +21,7 @@ class TareaBase(BaseModel):
 
 class TareaCreate(TareaBase):
     prioridad: PrioridadTarea = PrioridadTarea.media
+    fecha_vencimiento: datetime | None = None
     @field_validator("titulo")
     @classmethod
     def validar_titulo(cls, value: str):
@@ -34,6 +35,7 @@ class TareaCreate(TareaBase):
 class TareaUpdate(TareaBase):
     estado: EstadoTarea
     prioridad: PrioridadTarea
+    fecha_vencimiento: datetime | None = None
     @field_validator("titulo")
     @classmethod
     def validar_titulo(cls, value: str):
@@ -46,6 +48,7 @@ class TareaResponse(TareaBase):
     id: int
     estado: EstadoTarea
     prioridad: PrioridadTarea
+    fecha_vencimiento: datetime | None = None
     created_at: datetime
     updated_at: datetime
 
