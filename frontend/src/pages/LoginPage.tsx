@@ -1,10 +1,21 @@
 import Card from "../components/ui/Card";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import { useState } from "react";
+import { login } from "../services/authService";
 
 function LoginPage() {
-    const iniciarSesion = () => {
-        console.log("Iniciando sesión...")
+    const [correo, setCorreo] = useState("")
+    const [password, setPassword] = useState("")
+    const iniciarSesion = async () => {
+
+        if (correo === "" || password === "") {
+            alert("Todos los campos son obligatorios")
+        }
+
+        const respuesta = await login(correo, password)
+
+        console.log(respuesta)
     }
 
     return (
@@ -19,9 +30,9 @@ function LoginPage() {
 
                 </div>
                 
-                <Input type="email" placeholder="Correo electrónico" />
+                <Input type="email" placeholder="Correo electrónico" value={correo} onChange={(e) => setCorreo(e.target.value)} />
 
-                <Input type="password" placeholder="Contraseña" />
+                <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} />
 
                 <Button texto="Iniciar Sesión" onClick={iniciarSesion} />
             </Card>

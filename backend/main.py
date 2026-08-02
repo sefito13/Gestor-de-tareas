@@ -1,28 +1,26 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.routers.tarea import router as tarea_router
 from app.routers.usuario import router as usuario_router
 from app.routers.auth import router as auth_router
-
-openapi_tags = [
-    {
-        "name": "Auth", 
-        "description": "Autenticacion"
-    },
-    {
-        "name": "Usuarios", 
-        "description": "Gestion de usuarios"
-    },
-    {
-        "name": "Tareas", 
-        "description": "Gestion de tareas"
-    }
-]
 
 app = FastAPI(
     title="Task Manager API",
     description="API para gestion de tareas",
     version="1.0.0"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+print(">>> Este es mi main <<<")
 
 app.include_router(tarea_router)
 app.include_router(usuario_router)
