@@ -1,14 +1,14 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom"
+import { estaAutenticado } from "../services/tokenService"
 
 function ProtectedRoute() {
-    const token = localStorage.getItem("acces_token");
 
-    if (token) {
+    if (estaAutenticado()) {
         return <Outlet />
     }
     
-    return <Navigate to="/" />;
+    return <Navigate to="/" />
 }
 
-export default ProtectedRoute;
+export default ProtectedRoute
 
