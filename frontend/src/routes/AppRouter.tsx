@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import DashboardPage from "../pages/DashboardPage";
-import NotFoundPage from "../pages/NotFoundPage";
-import MainLayout from "../layouts/MainLayout";
-import ProtectedRoute from "../components/ProtectRoute";
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import LoginPage from "../pages/LoginPage"
+import DashboardPage from "../pages/DashboardPage"
+import NotFoundPage from "../pages/NotFoundPage"
+import MisTareasPage from "../pages/MisTareasPage"
+import MainLayout from "../layouts/MainLayout"
+import ProtectedRoute from "../components/ProtectRoute"
 
 function AppRouter() {
     return (
@@ -14,6 +15,7 @@ function AppRouter() {
                 <Route element={<ProtectedRoute />}>
                     <Route element={<MainLayout />}>
                         <Route path="dashboard" element={<DashboardPage />} />
+                        <Route path="mis-tareas" element={<MisTareasPage />} />
                     </Route>
                 </Route>
                 

@@ -19,7 +19,7 @@ function Sidebar() {
                 <nav className="flex flex-col gap-4">
 
                     <a href="/dashboard" className="hover:text-blue-300">Dashboard</a>
-                    <a href="#" className="hover:text-blue-300">Mis tareas</a>
+                    <a href="/mis-tareas" className="hover:text-blue-300">Mis tareas</a>
                     <a href="#" className="hover:text-blue-300">Perfil</a>
 
                 </nav>
