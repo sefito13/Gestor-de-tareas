@@ -6,6 +6,7 @@ type Tarea = {
 
 type TaskTableProps = {
     tareas: Tarea[]
+    onEliminar: (id: number) => void
 }
 
 function TaskTable(props: TaskTableProps) {
@@ -24,6 +25,10 @@ function TaskTable(props: TaskTableProps) {
                         Estado
                     </th>
 
+                    <th className="p-4 text-left">
+                        Acciones
+                    </th>
+
                 </tr>
 
             </thead>
@@ -40,6 +45,14 @@ function TaskTable(props: TaskTableProps) {
 
                         <td className="p-4">
                             {tarea.estado}
+                        </td>
+
+                        <td className="p4 text-center">
+
+                            <button onClick={() => props.onEliminar(tarea.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors">
+                                Eliminar
+                            </button>
+
                         </td>
 
                     </tr>

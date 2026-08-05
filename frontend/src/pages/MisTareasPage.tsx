@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { obtenerTareas, crearTarea } from "../services/taskService"
+import { obtenerTareas, crearTarea, eliminarTarea } from "../services/taskService"
 import TaskTable from "../components/task/TaskTable"
 import Input from "../components/ui/Input"
 import Button from "../components/ui/Button"
@@ -34,6 +34,20 @@ function MisTareasPage() {
             console.error(error)
 
         }   
+    }
+
+    const eliminarTareaSeleccionada = async (id: number) => {
+        try {
+
+            await eliminarTarea(id)
+
+            cargarTareas()
+            
+        } catch (error) {
+
+            console.error(error)
+            
+        }
     }
     
     const cargarTareas = async () => {
@@ -71,7 +85,8 @@ function MisTareasPage() {
 
             <div className="mt-6">
 
-                <TaskTable tareas={tareas} />
+                <TaskTable tareas={tareas} onEliminar={eliminarTareaSeleccionada} />
+                
                 <Modal abierto={modalAbierto} titulo="Nueva Tarea" onClose={cerrarModal}>
 
                     <TaskForm
